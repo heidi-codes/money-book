@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Ionicon from "react-ionicons";
+import logo from "../logo.svg";
+import { withRouter } from "react-router-dom";
+import PieChart from "../components/PieChart";
 import {
   LIST_VIEW,
   CHART_VIEW,
@@ -8,15 +11,37 @@ import {
   TYPE_OUTCOME,
   Colors
 } from "../utility";
-import PieChart from "../components/PieChart";
 import PriceList from "../components/PriceList";
 import MonthPicker from "../components/MonthPicker";
 import CreateBtn from "../components/CreateBtn";
 import TotalPrice from "../components/TotalPrice";
 import Loader from "../components/Loader";
 import { Tabs, Tab } from "../components/Tabs";
+import withContext from "../WithContext";
 
 const tabsText = [LIST_VIEW, CHART_VIEW];
+
+const generateChartDataByCategory = (items, type = TYPE_OUTCOME) => {
+  let categoryMap = {};
+  items
+    .filter((item) => item.category.type === type)
+    .forEach((item) => {
+      if (categoryMap[item.cid]) {
+        categoryMap[item.cid].value += item.price * 1;
+        categoryMap[item.cid].items = [...categoryMap[item.cid].items, item.id];
+      } else {
+        categoryMap[item.cid] = {
+          category: item.category,
+          value: item.price * 1,
+          items: [item.id]
+        };
+      }
+    });
+  return Object.keys(categoryMap).map((mapKey) => ({
+    ...categoryMap[mapKey],
+    name: categoryMap[mapKey].category.name
+  }));
+};
 
 export class Home extends Component {
   constructor(props) {
@@ -25,6 +50,9 @@ export class Home extends Component {
       tabView: tabsText[0]
     };
   }
+  componentDidMount() {
+    this.props.actions.getInitalData();
+  }
   changeView = (index) => {
     this.setState({
       tabView: tabsText[index]
@@ -32,6 +60,15 @@ export class Home extends Component {
   };
   changeDate = (year, month) => {
     this.props.actions.selectNewMonth(year, month);
+  };
+  createItem = () => {
+    this.props.history.push("/create");
+  };
+  modifyItem = (item) => {
+    this.props.history.push(`/edit/${item.id}`);
+  };
+  deleteItem = (item) => {
+    this.props.actions.deleteItem(item);
   };
   render() {
     const { data } = this.props;
@@ -61,13 +98,22 @@ export class Home extends Component {
     );
     return (
       <React.Fragment>
-        <MonthPicker
-          year={currentDate.year}
-          month={currentDate.month}
-          onChange={this.changeDate}
-        />
-        <div className="col">
-          <TotalPrice income={totalIncome} outcome={totalOutcome} />
+        <div className="App-header">
+          <div className="row mb-5 justify-content-center">
+            <img src={logo} className="App-logo" alt="logo" />
+          </div>
+          <div className="row">
+            <div className="col">
+              <MonthPicker
+                year={currentDate.year}
+                month={currentDate.month}
+                onChange={this.changeDate}
+              />
+            </div>
+            <div className="col">
+              <TotalPrice income={totalIncome} outcome={totalOutcome} />
+            </div>
+          </div>
         </div>
         <div className="content-area py-3 px-3">
           {isLoading && <Loader />}
@@ -125,3 +171,11 @@ export class Home extends Component {
     );
   }
 }
+
+Home.propTypes = {
+  data: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
+  history: PropTypes.object
+};
+
+export default withRouter(withContext(Home));
