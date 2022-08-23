@@ -4,6 +4,7 @@ import Ionicon from "react-ionicons";
 import { LIST_VIEW, CHART_VIEW, Colors } from "../utility";
 import PriceList from "../components/PriceList";
 import MonthPicker from "../components/MonthPicker";
+import CreateBtn from "../components/CreateBtn";
 import { Tabs, Tab } from "../components/Tabs";
 
 const tabsText = [LIST_VIEW, CHART_VIEW];
@@ -55,6 +56,7 @@ export class Home extends Component {
             Chart
           </Tab>
         </Tabs>
+        <CreateBtn onClick={this.createItem} />
         <PriceList />
       </React.Fragment>
     );
