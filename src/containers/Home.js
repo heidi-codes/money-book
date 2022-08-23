@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Ionicon from "react-ionicons";
-import { LIST_VIEW, CHART_VIEW, Colors } from "../utility";
+import {
+  LIST_VIEW,
+  CHART_VIEW,
+  TYPE_INCOME,
+  TYPE_OUTCOME,
+  Colors
+} from "../utility";
+import PieChart from "../components/PieChart";
 import PriceList from "../components/PriceList";
 import MonthPicker from "../components/MonthPicker";
 import CreateBtn from "../components/CreateBtn";
@@ -26,9 +33,30 @@ export class Home extends Component {
   };
   render() {
     const { data } = this.props;
-    const { currentDate, isLoading } = data;
+    const { items, categories, currentDate, isLoading } = data;
     const { tabView } = this.state;
     const tabIndex = tabsText.findIndex((tabText) => tabText === tabView);
+    const itemsWithCategory = Object.keys(items).map((id) => {
+      items[id].category = categories[items[id].cid];
+      return items[id];
+    });
+    let totalIncome = 0,
+      totalOutcome = 0;
+    itemsWithCategory.forEach((item) => {
+      if (item.category.type === TYPE_OUTCOME) {
+        totalOutcome += item.price;
+      } else {
+        totalIncome += item.price;
+      }
+    });
+    const chartOutcomDataByCategory = generateChartDataByCategory(
+      itemsWithCategory,
+      TYPE_OUTCOME
+    );
+    const chartIncomeDataByCategory = generateChartDataByCategory(
+      itemsWithCategory,
+      TYPE_INCOME
+    );
     return (
       <React.Fragment>
         <MonthPicker
@@ -57,6 +85,30 @@ export class Home extends Component {
           </Tab>
         </Tabs>
         <CreateBtn onClick={this.createItem} />
+        {tabView === LIST_VIEW && itemsWithCategory.length > 0 && (
+          <PriceList
+            items={itemsWithCategory}
+            onModifyItem={this.modifyItem}
+            onDeleteItem={this.deleteItem}
+          />
+        )}
+        {tabView === LIST_VIEW && itemsWithCategory.length === 0 && (
+          <div className="alert alert-light text-center no-record">
+            You don't have any records.
+          </div>
+        )}
+        {tabView === CHART_VIEW && (
+          <React.Fragment>
+            <PieChart
+              title="Month Pay"
+              categoryData={chartOutcomDataByCategory}
+            />
+            <PieChart
+              title="Month Income"
+              categoryData={chartIncomeDataByCategory}
+            />
+          </React.Fragment>
+        )}
         <PriceList />
       </React.Fragment>
     );
