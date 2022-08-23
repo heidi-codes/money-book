@@ -12,6 +12,7 @@ import PieChart from "../components/PieChart";
 import PriceList from "../components/PriceList";
 import MonthPicker from "../components/MonthPicker";
 import CreateBtn from "../components/CreateBtn";
+import TotalPrice from "../components/TotalPrice";
 import Loader from "../components/Loader";
 import { Tabs, Tab } from "../components/Tabs";
 
@@ -65,6 +66,9 @@ export class Home extends Component {
           month={currentDate.month}
           onChange={this.changeDate}
         />
+        <div className="col">
+          <TotalPrice income={totalIncome} outcome={totalOutcome} />
+        </div>
         <div className="content-area py-3 px-3">
           {isLoading && <Loader />}
           {!isLoading && (
