@@ -22,8 +22,7 @@ const PriceList = ({ items, onModifyItem, onDeleteItem }) => {
           </span>
           <span className="col-5">{item.title}</span>
           <span className="col-2 font-weight-bold">
-            {item.category.type === "income" ? "+" : "-"}
-            {item.price}元
+            {item.category.type === "income" ? "+" : "-"}${item.price}
           </span>
           <span className="col-2">{item.date}</span>
           <a

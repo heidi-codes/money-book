@@ -81,7 +81,7 @@ export class CreatePage extends React.Component {
       >
         {data.isLoading && <Loader />}
         <Tabs activeIndex={tabIndex} onTabChange={this.tabChange}>
-          <Tab>Pay</Tab>
+          <Tab>Outcome</Tab>
           <Tab>Income</Tab>
         </Tabs>
         <CategorySelect
