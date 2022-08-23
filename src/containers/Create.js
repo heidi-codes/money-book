@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import CategorySelect from "../components/CategorySelect";
 import { Tabs, Tab } from "../components/Tabs";
 import PriceForm from "../components/PriceForm";
+import Loader from "../components/Loader";
 import { TYPE_INCOME, TYPE_OUTCOME } from "../utility";
 
 const tabsText = [TYPE_OUTCOME, TYPE_INCOME];

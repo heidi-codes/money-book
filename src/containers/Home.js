@@ -12,6 +12,7 @@ import PieChart from "../components/PieChart";
 import PriceList from "../components/PriceList";
 import MonthPicker from "../components/MonthPicker";
 import CreateBtn from "../components/CreateBtn";
+import Loader from "../components/Loader";
 import { Tabs, Tab } from "../components/Tabs";
 
 const tabsText = [LIST_VIEW, CHART_VIEW];
@@ -64,52 +65,58 @@ export class Home extends Component {
           month={currentDate.month}
           onChange={this.changeDate}
         />
-        <Tabs activeIndex={tabIndex} onTabChange={this.changeView}>
-          <Tab>
-            <Ionicon
-              className="rounded-circle mr-2"
-              fontSize="25px"
-              color={Colors.blue}
-              icon="ios-paper"
-            />
-            List
-          </Tab>
-          <Tab>
-            <Ionicon
-              className="rounded-circle mr-2"
-              fontSize="25px"
-              color={Colors.blue}
-              icon="ios-pie"
-            />
-            Chart
-          </Tab>
-        </Tabs>
-        <CreateBtn onClick={this.createItem} />
-        {tabView === LIST_VIEW && itemsWithCategory.length > 0 && (
-          <PriceList
-            items={itemsWithCategory}
-            onModifyItem={this.modifyItem}
-            onDeleteItem={this.deleteItem}
-          />
-        )}
-        {tabView === LIST_VIEW && itemsWithCategory.length === 0 && (
-          <div className="alert alert-light text-center no-record">
-            You don't have any records.
-          </div>
-        )}
-        {tabView === CHART_VIEW && (
-          <React.Fragment>
-            <PieChart
-              title="Month Pay"
-              categoryData={chartOutcomDataByCategory}
-            />
-            <PieChart
-              title="Month Income"
-              categoryData={chartIncomeDataByCategory}
-            />
-          </React.Fragment>
-        )}
-        <PriceList />
+        <div className="content-area py-3 px-3">
+          {isLoading && <Loader />}
+          {!isLoading && (
+            <React.Fragment>
+              <Tabs activeIndex={tabIndex} onTabChange={this.changeView}>
+                <Tab>
+                  <Ionicon
+                    className="rounded-circle mr-2"
+                    fontSize="25px"
+                    color={Colors.blue}
+                    icon="ios-paper"
+                  />
+                  List
+                </Tab>
+                <Tab>
+                  <Ionicon
+                    className="rounded-circle mr-2"
+                    fontSize="25px"
+                    color={Colors.blue}
+                    icon="ios-pie"
+                  />
+                  Chart
+                </Tab>
+              </Tabs>
+              <CreateBtn onClick={this.createItem} />
+              {tabView === LIST_VIEW && itemsWithCategory.length > 0 && (
+                <PriceList
+                  items={itemsWithCategory}
+                  onModifyItem={this.modifyItem}
+                  onDeleteItem={this.deleteItem}
+                />
+              )}
+              {tabView === LIST_VIEW && itemsWithCategory.length === 0 && (
+                <div className="alert alert-light text-center no-record">
+                  You don't have any records.
+                </div>
+              )}
+              {tabView === CHART_VIEW && (
+                <React.Fragment>
+                  <PieChart
+                    title="Month Pay"
+                    categoryData={chartOutcomDataByCategory}
+                  />
+                  <PieChart
+                    title="Month Income"
+                    categoryData={chartIncomeDataByCategory}
+                  />
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          )}
+        </div>
       </React.Fragment>
     );
   }
